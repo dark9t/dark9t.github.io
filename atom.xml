@@ -4,7 +4,7 @@
   <title><![CDATA[Keep Growing]]></title>
   <link href="http://dark9t.github.io/atom.xml" rel="self"/>
   <link href="http://dark9t.github.io/"/>
-  <updated>2014-06-07T13:24:44-07:00</updated>
+  <updated>2014-06-07T16:10:08-07:00</updated>
   <id>http://dark9t.github.io/</id>
   <author>
     <name><![CDATA[William MA]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[What Would Do if You Are Not Afraid? --about Self-limiting Belifes]]></title>
+    <link href="http://dark9t.github.io/blog/2014/06/07/what-would-do-if-you-are-not-afraid-about-self-limiting-belifes/"/>
+    <updated>2014-06-07T13:48:14-07:00</updated>
+    <id>http://dark9t.github.io/blog/2014/06/07/what-would-do-if-you-are-not-afraid-about-self-limiting-belifes</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Why Digest Authentication Fails in Windows 7 Mini-redirector]]></title>
