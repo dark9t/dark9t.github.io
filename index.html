@@ -9,8 +9,7 @@
   <meta name="author" content="William MA">
 
   
-  <meta name="description" content="afaf
-">
+  <meta name="description" content="Here is the problem: you have a WebDAV server, it works with almost all WebDAV clients except Windows 7 mini-redirector when using Digest &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -95,7 +94,50 @@
   </header>
 
 
-  <div class="entry-content"><p>afaf</p>
+  <div class="entry-content"><p>Here is the problem: you have a WebDAV server, it works with almost all WebDAV clients except Windows 7 mini-redirector when using Digest Authentication.</p>
+
+<p>Admittedly, why choosing Digest Authentication and sticking with Windows 7 mini-redirector in itself might be a debate. This article does not discuss about design options such as this. It only aims to share what I&rsquo;ve learned struggling with the Microsoft&rsquo;s WebDAV client so that other folks won&rsquo;t pay the price in the future.</p>
+
+<p>The usual way to connect to a WebDAV server from Win7 is to open up a Windows Explorer window, map a net drive to the url of the server. If the server is protected by Digest Authentication, you will be prompted to enter your username and password. You type in, submit, and it pops up another box, asking you for credentials again. You keep typing the correct credentials 3 times, and Windows will not allow you keep trying.</p>
+
+<p>This is the problem I was facing. Making things more interesting, the problem could be masked when Fiddler the web debugger is present. That is to say, whenever Fiddler is the man in the middle, it works; otherwise, it stops working.</p>
+
+<p>I tried to approach this problem from many directions which I will cover later in this post, but all didn&rsquo;t solve the problem.</p>
+
+<p>I was a big step forward when I discovered that Fiddler has two connection related options: &ldquo;Reuse client connection&rdquo; and &ldquo;Reuse server connection&rdquo;, both are turned on by default for peformance reason I suppose. The working/not working scenarios I described earlier could be reproduced by toggle &ldquo;Reuse client connection&rdquo; on/off, without shutting down the Fiddler completely.</p>
+
+<p>By comparing the connection patterns of my session with the session between Win 7 client and Apache, the difference turned out to be that my WebDAV server always drops the connection, especially upon returning 400 series of HTTP status code, for example, 401 Unauthorized. The fix is simple, keeping the connection alive upon 401 solves the problem immediately.</p>
+
+<p>My coworker, a seasoned developer, told me this is an ancient bug of Microsoft, which existed for over 12 years but they never fixed it. The client starts a TCP connection, C, and then sends a plain HTTP request, the server will generate a 401 response together with &ldquo;WWW-Authenicate&rdquo; header, including the Digest information, sends it back to the client. At this particular moment, the server has the choices to either keep the connection alive, or drops it, regardless of what the
+&ldquo;Connection&rdquo;, &ldquo;Keep-Alive&rdquo; header says earlier. Say the server decided to drop the connection, when the 401 response get to the win 7 client, it will compute an &ldquo;Authorization&rdquo; header needed for Digest Authentication, however, win 7 client insists to send this header along through the connection C created earlier, if C is broken, it will start a new connection, C&#8217;, send a plain request WITHOUT the &ldquo;Authorization&rdquo; header. At this point, you should be able to predict what is going to
+happen next and to explain why the multiple login problems exist ever.</p>
+
+<p>To summary the above process, the Win 7 client will ONLY send the &ldquo;Authorization&rdquo; header upon two conditions: 1. right after you submit the credentials, i.e. when &ldquo;Authorization&rdquo; header was created the first time; 2. the connection was the same connection through which it sent the original plain request and got the 401 response.</p>
+
+<p>HTTP is a stateless protocol, neither client nor server should rely on any states such as the connection status. A robust server such as Apache with WebDAV module enabled or a robust client such as Cadaver is able to cope with a rigid client such as win 7 client, or a rigid server such as my server.</p>
+
+<p>WebDAV with Digest is hard to get right, I only saw two servers made it right so far, one is the popular Apache DAV module, the other is my server after fixing this bug.</p>
+
+<p>Win 7 WebDAV support is indeed crappy. There are many other choices for your customers. Cadaver is an excellent open source WebDAV client on Linux/Unix platforms, Mac has build-in WebDAV support, and third party clients such as Cyber Duck, BitKinex, etc. are all good choices. However, if a large portion of your customers are still relying on Windows platform thus Win7 mini-redirector is still their most convenient way to access their WebDAV server, you may still need to make it work for the
+customers. Here are some other possible causes that the Digest Authentication that does not work.</p>
+
+<ol>
+<li>Your authentication logic is implemented wrong so it won&rsquo;t accept even correct credentials</li>
+<li>The DAV response body uses default namespace, refer to the links below for further details:
+<a href="http://www.greenbytes.de/tech/webdav/webdav-redirector-list.html#issue-namespace-handling">http://www.greenbytes.de/tech/webdav/webdav-redirector-list.html#issue-namespace-handling</a>
+<a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=49428">https://issues.apache.org/bugzilla/show_bug.cgi?id=49428</a></li>
+<li>If you are sending &ldquo;Authentication-Info&rdquo; header, be sure to make it work</li>
+</ol>
+
+
+<p>If all of these does not help you, here are some approaches I found useful when hunting for the root cause:
+1. Use Fiddler, ngrep to capture and study the traffic
+2. Use open source clients and servers as base reference. You could know the machinery of process by reading the code; the code is well tested and reliable
+3. Expand your perspectives.  If HTTP communication does not work, the reason might be the traffic (content), timeout (timing), connection (context),etc. <br/>
+4. Remember the old fact: HTTP is stateless. No assumptions should be made based on any states added
+5. Read the RFC carefully and do not hesitate to ask questions online</p>
+
+<p>To wrap up, Digest Authentication is a scheme stronger than Basic. Basic literally provides no protection in terms of today&rsquo;s security technologies and Digest is inherently vulnerable to man in the middle attack. Please think carefully which security context are you using them in.</p>
 </div>
   
   
