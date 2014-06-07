@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Tryout | Keep Growing]]></title>
+  <link href="http://dark9t.github.io/blog/categories/tryout/atom.xml" rel="self"/>
+  <link href="http://dark9t.github.io/"/>
+  <updated>2014-06-07T16:29:16-07:00</updated>
+  <id>http://dark9t.github.io/</id>
+  <author>
+    <name><![CDATA[William MA]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Adding Comments to Blog]]></title>
+    <link href="http://dark9t.github.io/blog/2014/06/07/adding-comments-to-blog/"/>
+    <updated>2014-06-07T16:23:18-07:00</updated>
+    <id>http://dark9t.github.io/blog/2014/06/07/adding-comments-to-blog</id>
+    <content type="html"><![CDATA[<p>I tried to add Disqus comments to my site yet it didn&rsquo;t work. It turned out to be a stupid and old mistake. I didn&rsquo;t activate my newly registered Disqus account by verifying email address.</p>
+
+<p>This nice post helped me to find that out.
+<a href="http://hal.case.edu/~rrc/blog/2013/09/29/disqus-comments-not-visible/">http://hal.case.edu/~rrc/blog/2013/09/29/disqus-comments-not-visible/</a></p>
+
+<p>A simple reminder to myself, always not make assumptions about simple little things. We as human being tend to make quick assumptions about things that look simple and trivial to us, thus not giving it a second thought before we hurry to the next step/thing. Compputer Science/Software Development is unfortunately a field in which such careless assumptions could slow you down dramatically or even fatal ( in terms of system not life).</p>
+
+<p>So slow down and make sure everything is tidy and right.</p>
+]]></content>
+  </entry>
+  
+</feed>
